@@ -1,4 +1,4 @@
-# 🚀 MultiDB Academy - Guía de Instalación
+#  MultiDB Academy - Guía de Instalación
 
 cat > ~/Escritorio/Desarrollo-typescript/api-front-c/README.md << 'EOF'
 # MultiDB Academy
