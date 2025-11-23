@@ -1,5 +1,17 @@
-# MultiDBAcademy---Frontend
+# MultiDBAcademy – Frontend
 
- We will develop a professional web platform that allows you to manage multiple database engines (relational and non-relational) from a single interface.
+This is the frontend for **MultiDBAcademy**, built with **Next.js 14** using the App Router. The frontend provides the user interface for managing database instances, authentication, and interacting with the backend API.
 
-(This is the frontend repository)
+---
+
+##  Tech Stack
+
+- **Next.js 14**
+- **React 18**
+- **TypeScript**
+- **TailwindCSS** 
+- **Fetch / Axios for API requests**
+- **REST API communication with the MultiDBAcademy backend**
+
+
+
