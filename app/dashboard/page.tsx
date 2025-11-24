@@ -28,9 +28,8 @@ export default function DashboardPage() {
 
     const roleColors = {
         Student: 'from-blue-500 to-cyan-500',
-        Teacher: 'from-purple-500 to-pink-500',
         Admin: 'from-red-500 to-orange-500'
-    };
+    } as const;
 
     return (
         <div className="min-h-screen bg-black">
@@ -73,7 +72,6 @@ export default function DashboardPage() {
                     </h2>
                     <p className="text-xl text-gray-400 animate-fade-in-up animation-delay-200">
                         {user.role === 'Student' && 'Explora tus instancias y ejecuta queries SQL'}
-                        {user.role === 'Teacher' && 'Gestiona instancias y asigna a estudiantes'}
                         {user.role === 'Admin' && 'Control total del sistema'}
                     </p>
                 </div>
@@ -94,7 +92,7 @@ export default function DashboardPage() {
                                     <h3 className="text-xl font-bold text-white mb-2">Mis Queries</h3>
                                     <p className="text-gray-400 text-sm">Ejecuta consultas SQL en tus instancias</p>
                                     <div className="mt-4 flex items-center text-blue-400 text-sm font-semibold">
-                                        Abrir <span className="ml-2 group-hover:ml-4 transition-all">→</span>
+                                        Abrir <span className="ml-2 group-hover:ml-4 transition-all">?</span>
                                     </div>
                                 </div>
                             </Link>
@@ -109,14 +107,14 @@ export default function DashboardPage() {
                                     <h3 className="text-xl font-bold text-white mb-2">Mis Instancias</h3>
                                     <p className="text-gray-400 text-sm">Ver instancias asignadas</p>
                                     <div className="mt-4 flex items-center text-purple-400 text-sm font-semibold">
-                                        Abrir <span className="ml-2 group-hover:ml-4 transition-all">→</span>
+                                        Abrir <span className="ml-2 group-hover:ml-4 transition-all">?</span>
                                     </div>
                                 </div>
                             </Link>
                         </>
                     )}
 
-                    {(user.role === 'Teacher' || user.role === 'Admin') && (
+                    {user.role === 'Admin' && (
                         <>
                             <Link href="/instances/create" className="group">
                                 <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 hover:border-green-500 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-green-500/20">
@@ -128,7 +126,7 @@ export default function DashboardPage() {
                                     <h3 className="text-xl font-bold text-white mb-2">Crear Instancia</h3>
                                     <p className="text-gray-400 text-sm">Nueva instancia de base de datos</p>
                                     <div className="mt-4 flex items-center text-green-400 text-sm font-semibold">
-                                        Crear <span className="ml-2 group-hover:ml-4 transition-all">→</span>
+                                        Crear <span className="ml-2 group-hover:ml-4 transition-all">?</span>
                                     </div>
                                 </div>
                             </Link>
@@ -143,7 +141,7 @@ export default function DashboardPage() {
                                     <h3 className="text-xl font-bold text-white mb-2">Asignar Instancia</h3>
                                     <p className="text-gray-400 text-sm">Asignar a estudiantes</p>
                                     <div className="mt-4 flex items-center text-yellow-400 text-sm font-semibold">
-                                        Asignar <span className="ml-2 group-hover:ml-4 transition-all">→</span>
+                                        Asignar <span className="ml-2 group-hover:ml-4 transition-all">?</span>
                                     </div>
                                 </div>
                             </Link>
@@ -158,7 +156,7 @@ export default function DashboardPage() {
                                     <h3 className="text-xl font-bold text-white mb-2">Ver Instancias</h3>
                                     <p className="text-gray-400 text-sm">Administrar todas las instancias</p>
                                     <div className="mt-4 flex items-center text-blue-400 text-sm font-semibold">
-                                        Ver todo <span className="ml-2 group-hover:ml-4 transition-all">→</span>
+                                        Ver todo <span className="ml-2 group-hover:ml-4 transition-all">?</span>
                                     </div>
                                 </div>
                             </Link>
