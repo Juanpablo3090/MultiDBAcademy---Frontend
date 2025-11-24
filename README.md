@@ -1,46 +1,36 @@
-# 🚀 MultiDB Academy - Guía de Instalación
+# MultiDB Academy - Guide
 
-cat > ~/Escritorio/Desarrollo-typescript/api-front-c/README.md << 'EOF'
-# MultiDB Academy
+Backend:
 
-## Requisitos Previos
-- Node.js v18 o superior
-- .NET 8 SDK
-- MySQL/MariaDB
+1 - Start the containers: docker compose up -d
 
-## Instalación
+2 - Start the API: dotnet run -----> /backend/MultiDBAcademy.api
 
-### 1. Backend (.NET)
-```bash
-cd MultiDBAcademy-main
-dotnet restore
-dotnet build
-dotnet run --project MultiDBAcademy.Api
+Frontend:
 
-## 📋 Requisitos Previos
+Start Node.js: npm run dev
 
-### Backend (.NET)
-- .NET 8 SDK
-- MySQL/MariaDB 11.x
+Opción más formal (tipo README.md)
+Si esto es para la documentación de tu repositorio, te recomiendo este formato más limpio:
 
-### Frontend (Next.js)
-- Node.js 18+ y npm
+MultiDB Academy - Setup Guide
 
----
 
-## 🔧 Instalación Paso a Paso
+Backend:
 
-### 1️⃣ Configurar MySQL
+1. Start the containers:
 
-```bash
-# Iniciar MySQL/MariaDB
-sudo systemctl start mysql  # o mariadb
+Bash
 
-# Crear usuario y base de datos
-sudo mysql << 'SQL'
-CREATE DATABASE multidb_academy;
-CREATE USER 'dbuser'@'localhost' IDENTIFIED BY 'dbpass123';
-GRANT ALL PRIVILEGES ON multidb_academy.* TO 'dbuser'@'localhost';
-FLUSH PRIVILEGES;
-EXIT;
-SQL
+docker compose up -d
+2. Start the API: (Navigate to /backend/MultiDBAcademy.api)
+
+Bash
+
+dotnet run
+Frontend
+Start the development server:
+
+Bash
+
+npm run dev
