@@ -1,5 +1,4 @@
-// USAR STRINGS en lugar de números
-export type UserRole = 'Student' | 'Teacher' | 'Admin';
+﻿export type UserRole = "Student" | "Admin";
 
 export interface User {
   id: string;
@@ -45,11 +44,8 @@ export interface DatabaseInstance {
 
 export interface CreateInstanceRequest {
   name: string;
-  server: string;
-  port: number;
-  databaseName: string;
-  username: string;
-  password: string;
+  engineType: number;
+  userId: number;
 }
 
 export interface AssignInstanceRequest {
@@ -76,6 +72,8 @@ export interface StudentInstance {
   instanceId: string;
   instanceName: string;
   assignedAt: string;
+  databaseName?: string;
+  engineType?: number;
 }
 
 export interface FormErrors {

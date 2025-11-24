@@ -15,6 +15,7 @@ export default function InstancesPage() {
     const [studentInstances, setStudentInstances] = useState<StudentInstance[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
+    const [actionMessage, setActionMessage] = useState('');
 
     useEffect(() => {
         if (!authLoading && !isAuthenticated) {
@@ -60,6 +61,19 @@ export default function InstancesPage() {
 
     if (!user) return null;
 
+    const handleDeleteInstance = async (id: string) => {
+        if (!confirm('Eliminar esta instancia? Esta acción no se puede deshacer.')) return;
+        setError('');
+        setActionMessage('');
+        try {
+            await apiService.deleteInstance(id);
+            setActionMessage('Instancia eliminada correctamente.');
+            await loadInstances();
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Error al eliminar instancia');
+        }
+    };
+
     return (
         <div className="min-h-screen bg-black">
             {/* Navbar */}
@@ -91,17 +105,22 @@ export default function InstancesPage() {
                         </p>
                     </div>
 
-                    {(user.role === 'Teacher' || user.role === 'Admin') && (
+                    {user.role === 'Admin' && (
                         <Link href="/instances/create" className="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold rounded-lg shadow-lg hover:from-green-700 hover:to-emerald-700 transition-all duration-300 transform hover:scale-105">
                             + Nueva Instancia
                         </Link>
                     )}
                 </div>
 
-                {/* Error Message */}
+                {/* Messages */}
                 {error && (
                     <div className="bg-red-900 bg-opacity-50 border border-red-500 text-red-300 px-4 py-3 rounded-lg mb-6 animate-fade-in">
                         {error}
+                    </div>
+                )}
+                {actionMessage && (
+                    <div className="bg-green-900 bg-opacity-50 border border-green-500 text-green-300 px-4 py-3 rounded-lg mb-6 animate-fade-in">
+                        {actionMessage}
                     </div>
                 )}
 
@@ -120,42 +139,57 @@ export default function InstancesPage() {
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {studentInstances.map((instance) => (
-                                    <div key={instance.instanceId} className="group bg-gray-900 border border-gray-800 rounded-2xl p-6 hover:border-purple-500 transition-all duration-300 transform hover:scale-105">
-                                        <div className="flex items-start justify-between mb-4">
-                                            <div className="flex-1">
-                                                <h3 className="text-xl font-bold text-white mb-1">
-                                                    {instance.instanceName}
-                                                </h3>
-                                                <p className="text-sm text-gray-500">
-                                                    Asignado: {new Date(instance.assignedAt).toLocaleDateString('es-ES')}
-                                                </p>
-                                            </div>
-                                            <span className="bg-green-900 bg-opacity-50 text-green-300 text-xs font-semibold px-3 py-1 rounded-full border border-green-500">
-                                                Activo
-                                            </span>
-                                        </div>
+                                {studentInstances.map((instance, idx) => {
+                                    const key = instance.instanceId ?? instance.id ?? `${instance.instanceName}-${idx}`;
+                                    const assignedDate = (() => {
+                                        const raw =
+                                            instance.assignedAt ??
+                                            (instance as any).createAt ??
+                                            (instance as any).createdAt ??
+                                            '';
+                                        const d = raw ? new Date(raw) : null;
+                                        return d && !isNaN(d.getTime())
+                                            ? d.toLocaleDateString('es-ES')
+                                            : '-';
+                                    })();
 
-                                        <div className="mt-6 pt-4 border-t border-gray-800">
-                                            <Link
-                                                href={`/student/queries?instanceId=${instance.instanceId}`}
-                                                className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg flex items-center justify-center hover:from-blue-700 hover:to-purple-700 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-purple-500/50"
-                                            >
-                                                Ejecutar Queries
-                                                <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                                                </svg>
-                                            </Link>
+                                    return (
+                                        <div key={key} className="group bg-gray-900 border border-gray-800 rounded-2xl p-6 hover:border-purple-500 transition-all duration-300 transform hover:scale-105">
+                                            <div className="flex items-start justify-between mb-4">
+                                                <div className="flex-1">
+                                                    <h3 className="text-xl font-bold text-white mb-1">
+                                                        {instance.instanceName}
+                                                    </h3>
+                                                    <p className="text-sm text-gray-500">
+                                                        Asignado: {assignedDate}
+                                                    </p>
+                                                </div>
+                                                <span className="bg-green-900 bg-opacity-50 text-green-300 text-xs font-semibold px-3 py-1 rounded-full border border-green-500">
+                                                    Activo
+                                                </span>
+                                            </div>
+
+                                            <div className="mt-6 pt-4 border-t border-gray-800">
+                                                <Link
+                                                    href={`/student/queries?instanceId=${instance.instanceId ?? instance.id ?? ''}`}
+                                                    className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg flex items-center justify-center hover:from-blue-700 hover:to-purple-700 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-purple-500/50"
+                                                >
+                                                    Ejecutar Queries
+                                                    <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                                    </svg>
+                                                </Link>
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         )}
                     </div>
                 )}
 
-                {/* Teacher/Admin View */}
-                {(user.role === 'Teacher' || user.role === 'Admin') && (
+                {/* Admin View */}
+                {user.role === 'Admin' && (
                     <div className="animate-fade-in-up">
                         {instances.length === 0 ? (
                             <div className="bg-gray-900 border border-gray-800 rounded-2xl p-12 text-center">
@@ -194,6 +228,9 @@ export default function InstancesPage() {
                                                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
                                                     Creado
                                                 </th>
+                                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                                                    Acciones
+                                                </th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-gray-800">
@@ -201,19 +238,23 @@ export default function InstancesPage() {
                                                 <tr key={instance.id} className="hover:bg-gray-800 transition-colors">
                                                     <td className="px-6 py-4 whitespace-nowrap">
                                                         <div className="font-medium text-white">{instance.name}</div>
-                                                        <div className="text-sm text-gray-500">ID: {instance.id.slice(0, 8)}...</div>
+                                                        <div className="text-sm text-gray-500">
+                                                            ID: {String(instance.id).slice(0, 8)}...
+                                                        </div>
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                                                        {instance.server}
+                                                        {instance.server ?? (instance as any).host ?? '-'}
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                                                        {instance.port}
+                                                        {instance.port ?? '-'}
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                                                        {instance.databaseName}
+                                                        {instance.databaseName ?? (instance as any).name}
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap">
-                                                        {instance.isActive ? (
+                                                        {(instance.isActive === true) ||
+                                                         (typeof (instance as any).status === 'string' && (instance as any).status.toLowerCase() === 'active') ||
+                                                         (typeof (instance as any).status === 'number' && (instance as any).status === 2) ? (
                                                             <span className="bg-green-900 bg-opacity-50 text-green-300 text-xs font-semibold px-3 py-1 rounded-full border border-green-500">
                                                                 Activo
                                                             </span>
@@ -224,7 +265,19 @@ export default function InstancesPage() {
                                                         )}
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                        {new Date(instance.createdAt).toLocaleDateString('es-ES')}
+                                                        {instance.createdAt
+                                                            ? new Date(instance.createdAt).toLocaleDateString('es-ES')
+                                                            : (instance as any).createAt
+                                                            ? new Date((instance as any).createAt).toLocaleDateString('es-ES')
+                                                            : '-'}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                                                        <button
+                                                            onClick={() => handleDeleteInstance(String(instance.id))}
+                                                            className="px-3 py-1 bg-red-900 hover:bg-red-800 text-red-100 border border-red-600 rounded-lg transition-all text-xs"
+                                                        >
+                                                            Eliminar
+                                                        </button>
                                                     </td>
                                                 </tr>
                                             ))}

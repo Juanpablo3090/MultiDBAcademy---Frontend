@@ -24,9 +24,8 @@ CREATE TABLE Roles (
 
 -- Insertar roles predeterminados
 INSERT INTO Roles (Id, Name) VALUES 
-(1, 'Student'),
-(2, 'Teacher'),
-(3, 'Admin');
+(1, 'Admin'),
+(2, 'Student');
 
 -- ====================================
 -- Tabla: Users
